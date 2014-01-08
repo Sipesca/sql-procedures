@@ -1,4 +1,4 @@
-sipesca
+SQL-Procedures
 =======
 
-repositorio para el proyecto sipesca
+Procedimientos para preprocesado de datos en Sipesca.
