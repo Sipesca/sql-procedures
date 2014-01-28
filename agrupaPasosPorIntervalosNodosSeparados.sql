@@ -11,7 +11,7 @@ DECLARE corte INT DEFAULT 19;
 
 IF intervalo >= 1440 THEN SET corte = 10; END IF;
 
-SELECT SUBSTR(FROM_UNIXTIME(truncate(tinicio/inter,0)*inter/1000),1,corte) as Fecha, idNodo ,  count(*) as Total, latitud,longitud,nombre,poligono
+SELECT SUBSTR(FROM_UNIXTIME(truncate(tinicio/inter,0)*inter/1000),1,corte) as Fecha, paso.idNodo ,  count(*) as Total, latitud,longitud,nombre,poligono
 	FROM paso, nodo
 		WHERE
 			tinicio
