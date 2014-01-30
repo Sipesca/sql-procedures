@@ -12,7 +12,7 @@ DECLARE corte INT DEFAULT 19;
 
 IF intervalo >= 1440 THEN SET corte = 10; END IF;
 
-SELECT	SUBSTR(FROM_UNIXTIME(truncate(t1.tinicio/inter,0)*inter/1000),1,corte) as Fecha,
+SELECT STRAIGHT_JOIN SUBSTR(FROM_UNIXTIME(truncate(t1.tinicio/inter,0)*inter/1000),1,corte) as Fecha,
 		#t1.idDispositivo,
 		t1.idNodo as Origen,
 		#t1.tinicio as Origen_inicio,
@@ -26,22 +26,23 @@ SELECT	SUBSTR(FROM_UNIXTIME(truncate(t1.tinicio/inter,0)*inter/1000),1,corte) as
 		#from_unixtime(t2.tinicio/1000) as Destino_fecha,
 	 count(*) as total,
 	 avg(t2.tinicio - t1.tinicio)/1000 as Diferencia
-	from
-		(SELECT idNodo,tinicio,idDispositivo from __paso
+	FROM
+		(SELECT idNodo,tinicio,idDispositivo FROM __paso
 			WHERE tinicio
 					BETWEEN  UNIX_TIMESTAMP(fechaMIN)*1000
 					AND  UNIX_TIMESTAMP(fechaMAX)*1000 
 		) as t1 
 		INNER JOIN 
-			(SELECT idNodo,tinicio,idDispositivo from __paso 
+			(SELECT idNodo,tinicio,idDispositivo FROM __paso 
 				WHERE tinicio
 					BETWEEN  UNIX_TIMESTAMP(fechaMIN)*1000-inter
 					AND  UNIX_TIMESTAMP(fechaMAX)*1000+inter 
+AND (t2.tinicio - t1.tinicio) BETWEEN 0 AND inter
 			) as t2 
 			ON	
 				t1.idDispositivo = t2.idDispositivo 
 				AND t1.idNodo <> t2.idNodo
-				AND (t2.tinicio - t1.tinicio) BETWEEN 0 AND inter
+				#AND (t2.tinicio - t1.tinicio) BETWEEN 0 AND inter
 	GROUP BY
 		t1.idNodo, t2.idNodo,
 		truncate(t1.tinicio/inter,0)
